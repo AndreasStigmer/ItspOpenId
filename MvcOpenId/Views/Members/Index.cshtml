@@ -1,0 +1,16 @@
+﻿@model IEnumerable<Model.Member>
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Index</h2>
+
+
+@foreach (Model.Member m in Model) {
+    <div>
+        <span>Firstname: </span>@m.FirstName <br />
+        <span>Lastname: </span> @m.LastName<br />
+        <span>Message Count: </span>@m.Messages.Count
+
+    </div>
+}
+

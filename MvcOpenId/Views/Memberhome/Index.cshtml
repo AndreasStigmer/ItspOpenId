@@ -1,0 +1,51 @@
+﻿@model Model.Member
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<div>
+    <h4>Member</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+
+    </dl>
+</div>
+<h2>Messages</h2>
+@foreach(Model.StatusMessage m in Model.Messages)
+{
+    <span>Private:</span>@Html.CheckBoxFor(x=>m.IsPrivate)
+    <span>@m.Message </span>
+
+}
+<div>
+
+</div>
+<p>
+    @Html.ActionLink("Create", "Create", new { /* id = Model.PrimaryKey */ }) |
+</p>
