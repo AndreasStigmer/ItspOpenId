@@ -37,15 +37,24 @@
     </dl>
 </div>
 <h2>Messages</h2>
-@foreach(Model.StatusMessage m in Model.Messages)
+@foreach (Model.StatusMessage m in Model.Messages)
 {
-    <span>Private:</span>@Html.CheckBoxFor(x=>m.IsPrivate)
-    <span>@m.Message </span>
-
+    if((User.Identity.Name==m.OwnerId) || m.IsPrivate==false) {
+    <div class="row">
+        <div class="col-md-6">
+            @if (User.Identity.Name == m.OwnerId)
+            {
+                <span>Private: </span>@Html.CheckBoxFor(x => m.IsPrivate)
+            }
+            <br />
+            <p>@m.Message</p>
+        </div>
+    </div>
+    }
 }
 <div>
 
 </div>
 <p>
-    @Html.ActionLink("Create", "Create", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Skapa nytt meddelande", "CreateMessage", new { /* id = Model.PrimaryKey */ }) |
 </p>

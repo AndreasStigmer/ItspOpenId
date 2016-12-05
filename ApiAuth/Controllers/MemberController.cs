@@ -29,5 +29,12 @@ namespace ApiAuth.Controllers
             dr.SaveUser(newMember);
             return Json("Saved");
         }
+
+        [HttpPut]
+        public IHttpActionResult Put([FromBody]Member member)
+        {
+            dr.SaveUser(member);
+            return Json("Saved");
+        }
     }
 }

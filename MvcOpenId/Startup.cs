@@ -35,7 +35,6 @@ namespace MvcOpenId
                 ClientId="MvcOpenId",
                 ClientSecret="hemligt",
                 ResponseType="code id_token token",
-                //AuthenticationType="cookie",
                 SignInAsAuthenticationType="cookie",
                 Scope="openid profile email address roles read",
                 RedirectUri=Uris.MvcOpenIdCallback,

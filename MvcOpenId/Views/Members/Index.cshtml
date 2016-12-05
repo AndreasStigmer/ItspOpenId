@@ -6,11 +6,12 @@
 
 
 @foreach (Model.Member m in Model) {
-    <div>
-        <span>Firstname: </span>@m.FirstName <br />
-        <span>Lastname: </span> @m.LastName<br />
-        <span>Message Count: </span>@m.Messages.Count
+    <div class="row">
 
+        <div class="col-md-12">
+            <a href="/memberhome/?memberid=@m.UserId"><span>@m.FirstName @m.LastName</span></a><br />
+            <span>Message Count: </span>@m.Messages.Count
+        </div>
     </div>
 }
 

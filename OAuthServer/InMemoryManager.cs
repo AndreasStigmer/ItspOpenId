@@ -30,6 +30,18 @@ namespace OAuthServer
                         new Claim(Constants.ClaimTypes.Email,"andreas.stigmer@outlook.com"),
                         new Claim(Constants.ClaimTypes.Role,"admin")
                     },
+                },
+                new InMemoryUser{
+                    Subject="73829087439287320943762987108",
+                    Username="pelle",
+                    Password="hemligt",
+                    Claims=new [] {
+                        new Claim(Constants.ClaimTypes.GivenName,"Pelle"),
+                        new Claim(Constants.ClaimTypes.FamilyName,"Svensson"),
+                        new Claim(Constants.ClaimTypes.Address,"Hemvägen 12"),
+                        new Claim(Constants.ClaimTypes.Email,"pelle@home.se"),
+                        new Claim(Constants.ClaimTypes.Role,"user")
+                    },
                 }
             };
         }
