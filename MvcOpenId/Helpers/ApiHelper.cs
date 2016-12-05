@@ -1,7 +1,9 @@
-﻿using Model;
+﻿using IdentityModel.Client;
+using Model;
 using ProjConstants;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
@@ -20,14 +22,43 @@ namespace MvcOpenId.Helpers
         /// <returns></returns>
         public static HttpClient GetClient() {
             HttpClient hc = new HttpClient();
-            ClaimsIdentity user = HttpContext.Current.User.Identity as ClaimsIdentity;
-            var token = user.FindFirst("access_token").Value;
+            var token = GetAccessToken();
             hc.DefaultRequestHeaders.Clear();
             hc.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             hc.SetBearerToken(token);
             hc.BaseAddress = new Uri(Uris.ApiBase);
             return hc;
         }
+
+        public static string GetAccessToken() {
+            ClaimsIdentity user = HttpContext.Current.User.Identity as ClaimsIdentity;
+
+            var expire = DateTime.Parse(user.FindFirst("expires").Value);
+            var now = DateTime.UtcNow;
+            if (now<expire)
+            {
+                return user.FindFirst("access_token").Value;
+            }
+            TokenClient tc = new TokenClient(Uris.STSTokenEndpoint, "MvcOpenId", "hemligt");
+            var response = tc.RequestRefreshTokenAsync(user.FindFirst("refresh_token").Value).Result;
+
+            if (!response.IsError)
+            {
+                var expiresAt = DateTime.UtcNow.AddSeconds(response.ExpiresIn).ToString();
+                var claims = user.Claims.Where(c => c.Type != "access_token" && c.Type != "refresh_token" && c.Type != "expires").ToList();
+                claims.Add(new Claim("access_token", response.AccessToken));
+                claims.Add(new Claim("refresh_token", response.RefreshToken));
+                claims.Add(new Claim("expires", expiresAt));
+                ClaimsIdentity ci = new ClaimsIdentity(claims, "cookie", "name", "role");
+                HttpContext.Current.Request.GetOwinContext().Authentication.SignIn(ci);
+                return response.AccessToken;
+            }
+            else {
+                HttpContext.Current.Request.GetOwinContext().Authentication.SignOut();
+                return "";
+            }
+
+          }
 
         /// <summary>
         /// Sparar en member över apiet

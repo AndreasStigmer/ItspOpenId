@@ -27,7 +27,9 @@ namespace MvcOpenId
             Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Trace().CreateLogger();
 
             app.UseCookieAuthentication(new Microsoft.Owin.Security.Cookies.CookieAuthenticationOptions {
-                AuthenticationType = "cookie"
+                AuthenticationType = "cookie",
+                ExpireTimeSpan = new TimeSpan(0, 30, 0),
+                SlidingExpiration=true,
             });
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions() {
@@ -36,7 +38,7 @@ namespace MvcOpenId
                 ClientSecret="hemligt",
                 ResponseType="code id_token token",
                 SignInAsAuthenticationType="cookie",
-                Scope="openid profile email address roles read",
+                Scope="openid profile email address roles read offline_access",
                 RedirectUri=Uris.MvcOpenIdCallback,
                 Notifications=new OpenIdConnectAuthenticationNotifications() {
                     SecurityTokenValidated=async n => {
@@ -48,7 +50,20 @@ namespace MvcOpenId
                         foreach (Claim c in ur.Claims) { 
                             Debug.WriteLine(c.Type + "--" + c.Value);
                         }
-                        ci.AddClaim(new Claim("access_token", n.ProtocolMessage.AccessToken));
+
+
+                        //Fixar fram en refreshtoken som kan användas när access_token går ut
+                        TokenClient tc = new TokenClient(Uris.STSTokenEndpoint, "MvcOpenId", "hemligt");
+                        var refreshresponse = await tc.RequestAuthorizationCodeAsync(n.ProtocolMessage.Code, Uris.MvcOpenIdCallback);
+
+                        //Räknar ut tiden för expire ac access_token baserat på utc tid
+                        var expire = DateTime.UtcNow.AddSeconds(refreshresponse.ExpiresIn).ToString();
+                        ci.AddClaim(new Claim("access_token", refreshresponse.AccessToken));
+                        ci.AddClaim(new Claim("expires", expire));
+                        //Sparar refreshtoken som ett claim
+                        ci.AddClaim(new Claim("refresh_token", refreshresponse.RefreshToken));
+                        ///////////////////////////////////////////////////////////////////////////
+
                         ci.AddClaims(ur.Claims);
                         var subj = n.AuthenticationTicket.Identity.FindFirst(JwtClaimTypes.Subject).Value;
                         var iss = n.AuthenticationTicket.Identity.FindFirst(JwtClaimTypes.Issuer).Value;

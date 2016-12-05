@@ -111,6 +111,9 @@ namespace OAuthServer
                     ClientSecrets=new List<Secret> {
                         new Secret("hemligt".Sha256())
                     },
+                    IdentityTokenLifetime=120,
+                    AccessTokenLifetime=40,
+                    RefreshTokenUsage=TokenUsage.ReUse,
                     ClientName="Mvc OpenID",
                     Flow=Flows.Hybrid,
                     AllowAccessToAllScopes=true,
