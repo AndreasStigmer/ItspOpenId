@@ -13,7 +13,6 @@ namespace MvcOpenId.Helpers
 {
     public class ApiHelper
     {
-
         /// <summary>
         /// Skapar en HTTP client för att kommunicera med apiet.
         /// </summary>

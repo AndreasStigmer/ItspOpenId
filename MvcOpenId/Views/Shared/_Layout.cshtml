@@ -23,7 +23,14 @@
                     <li>@Html.ActionLink("Min sida", "Index", "Memberhome", new {id=HttpUtility.UrlEncode(User.Identity.Name)},null)</li>
                     <li>@Html.ActionLink("Alla medlemmar", "Index", "Members")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = User.Identity as System.Security.Claims.ClaimsIdentity;
+                        <li>@Html.ActionLink(String.Format("Logout({0})",user.FindFirst("given_name").Value), "Logout", "Account")</li>
+
+                    }
+                    </ul>
             </div>
         </div>
     </div>
