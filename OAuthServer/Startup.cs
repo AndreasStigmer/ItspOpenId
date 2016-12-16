@@ -22,10 +22,15 @@ namespace OAuthServer
             var cert = Convert.FromBase64String(ConfigurationManager.AppSettings["SigningCertificate"]);
 
             // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
-            string certFile = @"C:\Users\admin.CAMPUS-F0U53S1N\Documents\Visual Studio 2015\Projects\ApiAuth\OAuthServer\localhost.pfx";
+            string certFile = AppDomain.CurrentDomain.BaseDirectory+@"\localhost.pfx";
             var options = new IdentityServerOptions {
                 SigningCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(certFile,"password"),
                 IssuerUri= "https://MyISSUER:44372/",
+                
+                AuthenticationOptions =new AuthenticationOptions() {
+                    EnablePostSignOutAutoRedirect=true,
+                    PostSignOutAutoRedirectDelay=5
+                },
                 SiteName="My Super AuthServer",
                 PublicOrigin= "https://localhost:44372/",
                 Factory =factory

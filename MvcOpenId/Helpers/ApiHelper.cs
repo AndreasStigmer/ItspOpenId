@@ -1,4 +1,5 @@
-﻿using Model;
+﻿using IdentityModel.Client;
+using Model;
 using ProjConstants;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,44 @@ namespace MvcOpenId.Helpers
         public static HttpClient GetClient() {
             HttpClient hc = new HttpClient();
             ClaimsIdentity user = HttpContext.Current.User.Identity as ClaimsIdentity;
-            var token = user.FindFirst("access_token").Value;
+            var token = GetToken();
             hc.DefaultRequestHeaders.Clear();
             hc.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
             hc.SetBearerToken(token);
             hc.BaseAddress = new Uri(Uris.ApiBase);
             return hc;
+        }
+
+        public static string GetToken()
+        {
+            ClaimsIdentity user = HttpContext.Current.User.Identity as ClaimsIdentity;
+            var expires = DateTime.Parse(user.FindFirst("expire").Value);
+
+            if(expires>DateTime.UtcNow)
+            {
+                return user.FindFirst("access_token").Value;
+            }
+
+            TokenClient tc = new TokenClient(Uris.STSTokenEndpoint, "MvcOpenId", "hemligt");
+            var tresponse = tc.RequestRefreshTokenAsync(user.FindFirst("refresh_token").Value).Result;
+
+            if(!tresponse.IsError)
+            {
+                var claims = user.Claims.Where(c => c.Type != "access_token"  && c.Type != "refresh_token" && c.Type != "expire").ToList();
+                ClaimsIdentity newIdent = new ClaimsIdentity(claims, "cookie");
+                var expire = DateTime.UtcNow.AddSeconds(tresponse.ExpiresIn).ToString();
+                newIdent.AddClaim(new Claim("expire", expire));
+                newIdent.AddClaim(new Claim("access_token",tresponse.AccessToken));
+                //newIdent.AddClaim(new Claim("id_token", tresponse.IdentityToken));
+                newIdent.AddClaim(new Claim("refresh_token", tresponse.RefreshToken));
+
+                HttpContext.Current.Request.GetOwinContext().Authentication.SignIn(newIdent);
+
+                return tresponse.AccessToken; 
+            }
+
+            return "";
+
         }
 
         /// <summary>

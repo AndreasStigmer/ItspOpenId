@@ -113,9 +113,17 @@ namespace OAuthServer
                     },
                     ClientName="Mvc OpenID",
                     Flow=Flows.Hybrid,
+                    RequireConsent=false,
+                    RefreshTokenUsage=TokenUsage.ReUse,
+                    AccessTokenLifetime=20,
+                    IdentityTokenLifetime=10,
                     AllowAccessToAllScopes=true,
                     RedirectUris=new List<string> {
                         Uris.MvcOpenIdCallback
+                    },
+                    PostLogoutRedirectUris=new List<string>()
+                    {
+                         Uris.MvcOpenIdCallback
                     },
                     Enabled =true,
 
