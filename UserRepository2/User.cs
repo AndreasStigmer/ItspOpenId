@@ -4,15 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UserRepository2
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-
-    namespace UserRepository
+namespace UserRepo
     {
         public class User
         {
@@ -54,4 +46,4 @@ namespace UserRepository2
         }
     }
 
-}
+

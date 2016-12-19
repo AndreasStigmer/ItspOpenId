@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataRepository", "DataRepos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{CE63A831-F42A-4E18-AFFE-725F95ACE650}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserRepository2", "UserRepository2\UserRepository2.csproj", "{1AB3DCDB-52B6-40BA-9083-CEA22B4AF398}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserRepo", "UserRepository2\UserRepo.csproj", "{1AB3DCDB-52B6-40BA-9083-CEA22B4AF398}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
