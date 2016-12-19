@@ -10,23 +10,23 @@ namespace UserRepository
     public class UserRepository:IDisposable
     {
 
-      
+        private List<User> Users { get; set; }
+        private StreamReader fileStream { get; set; }
+
 
         public UserRepository()
         {
             Users = new List<User>();
             loadUsers();
         }
-        private List<User> Users { get; set; }
-        private StreamReader fileStream { get; set; }
-
+       
         public void Dispose()
         {
             fileStream.Close();
-           
             //throw new NotImplementedException();
         }
 
+        //Hämtar en användare baserat på användarnamn och lösenord
         public User GetUser(string username,string password)
         {
             return Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
@@ -57,6 +57,9 @@ namespace UserRepository
         }
 
 
+        /// <summary>
+        /// Läser in alla Users från jsonfilen
+        /// </summary>
         private void loadUsers()
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + @"\Users\users.json";
@@ -71,12 +74,13 @@ namespace UserRepository
                     CreateTestUsers();
                 }
             }
-            catch (Exception e) {
+            finally {
                 fileStream.Close();
                 CreateTestUsers();
             }
         }
 
+        //Skriver ner Listan med users till en Jsonfil
         private void saveUsers()
         {
 
@@ -93,6 +97,12 @@ namespace UserRepository
                     outStream.Close();
                 }
             }
+        }
+
+        public void AddUser(User newUser)
+        {
+            this.Users.Add(newUser);
+            saveUsers();
         }
 
     }
