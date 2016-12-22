@@ -11,6 +11,7 @@ namespace MvcOpenId.Controllers
         // GET: Signin
         public ActionResult Logout()
         {
+            //Loggar ut ur owinOcntexten
             Request.GetOwinContext().Authentication.SignOut();
             return View();
         }
