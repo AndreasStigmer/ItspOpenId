@@ -62,7 +62,7 @@ namespace UserRepo
         /// </summary>
         private void loadUsers()
         {
-            string path = AppDomain.CurrentDomain.BaseDirectory + @"\Users\users.json";
+            string path = AppDomain.CurrentDomain.BaseDirectory + @"Users\users.json";
             fileStream = new StreamReader(path);
 
             string data = fileStream.ReadToEnd();
@@ -71,13 +71,14 @@ namespace UserRepo
                 Users = Newtonsoft.Json.JsonConvert.DeserializeObject<List<User>>(data);
                 if (Users.Count == 1)
                 {
+                    fileStream.Close();
                     CreateTestUsers();
                 }
             }
             finally
             {
                 fileStream.Close();
-                CreateTestUsers();
+               
             }
         }
 
@@ -85,7 +86,7 @@ namespace UserRepo
         private void saveUsers()
         {
 
-            string path = AppDomain.CurrentDomain.BaseDirectory + @"\Users\users.json";
+            string path = AppDomain.CurrentDomain.BaseDirectory + @"Users\users.json";
 
             using (var outStream = new StreamWriter(path))
             {

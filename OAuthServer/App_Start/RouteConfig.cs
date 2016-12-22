@@ -18,7 +18,7 @@ namespace OAuthServer.App_Start
             config.MapRoute(
                 name:"Default",
                 url:"identity/{controller}/{action}",
-                defaults:new {controller="Account",action="index" }
+                defaults:new {controller="Account",action="create" }
                 );
         }
     }

@@ -40,6 +40,7 @@ namespace MvcOpenId
                 SignInAsAuthenticationType="cookie",
                 Scope="openid profile email address roles read offline_access",
                 RedirectUri=Uris.MvcOpenIdCallback,
+                PostLogoutRedirectUri=Uris.MvcOpenIdCallback,
                 Notifications=new OpenIdConnectAuthenticationNotifications() {
                     SecurityTokenValidated=async n => {
                         ClaimsIdentity ci = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType, "name", "role");
@@ -59,6 +60,7 @@ namespace MvcOpenId
                         //Räknar ut tiden för expire ac access_token baserat på utc tid
                         var expire = DateTime.UtcNow.AddSeconds(refreshresponse.ExpiresIn).ToString();
                         ci.AddClaim(new Claim("access_token", refreshresponse.AccessToken));
+                        ci.AddClaim(new Claim("id_token", refreshresponse.IdentityToken));
                         ci.AddClaim(new Claim("expires", expire));
                         //Sparar refreshtoken som ett claim
                         ci.AddClaim(new Claim("refresh_token", refreshresponse.RefreshToken));
@@ -71,8 +73,13 @@ namespace MvcOpenId
                         ci.AddClaim(NameClaim);
 
                         n.AuthenticationTicket = new Microsoft.Owin.Security.AuthenticationTicket(ci, n.AuthenticationTicket.Properties);
+                    },RedirectToIdentityProvider=n=> {
+                        if(n.ProtocolMessage.RequestType==Microsoft.IdentityModel.Protocols.OpenIdConnectRequestType.LogoutRequest)
+                        {
+                            n.ProtocolMessage.IdTokenHint = n.OwinContext.Authentication.User.FindFirst("id_token").Value;
+                        }
+                        return Task.FromResult(0);
                     }
-
                 }
             });
         }

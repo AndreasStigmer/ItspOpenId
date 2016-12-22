@@ -5,6 +5,9 @@ using Owin;
 using IdentityServer3.Core.Configuration;
 using System.Configuration;
 using Serilog;
+using OAuthServer.Services;
+using IdentityServer3.Core.Services;
+using System.Collections.Generic;
 
 [assembly: OwinStartup(typeof(OAuthServer.Startup))]
 
@@ -14,11 +17,18 @@ namespace OAuthServer
     {
         public void Configuration(IAppBuilder app)
         {
+            
+
             var inMemeoryManager = new InMemoryManager();
             var factory = new IdentityServerServiceFactory()
-                .UseInMemoryUsers(inMemeoryManager.GetUsers())
                 .UseInMemoryScopes(inMemeoryManager.GetScopes())
                 .UseInMemoryClients(inMemeoryManager.GetClients());
+            //.UseInMemoryUsers(inMemeoryManager.GetUsers())
+
+            //registrerar vår Custom userService som användarkälla
+            CustomUserService cus = new CustomUserService();
+            factory.UserService = new Registration<IUserService>();
+
             var cert = Convert.FromBase64String(ConfigurationManager.AppSettings["SigningCertificate"]);
 
             // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
@@ -27,6 +37,20 @@ namespace OAuthServer
                 SigningCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2(certFile,"password"),
                 IssuerUri= "https://MyISSUER:44372/",
                 SiteName="My Super AuthServer",
+               
+                AuthenticationOptions=new AuthenticationOptions() {
+                    EnablePostSignOutAutoRedirect=true,
+                    PostSignOutAutoRedirectDelay=3,
+
+                    LoginPageLinks=new List<LoginPageLink>
+                    {
+                        new LoginPageLink() {
+                            Type="createaccount",
+                            Text="Skapa ett konto",
+                            Href="~/Account"
+                        }
+                    }
+                },
                 PublicOrigin= "https://localhost:44372/",
                 Factory =factory
             };
