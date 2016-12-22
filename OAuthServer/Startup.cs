@@ -28,7 +28,13 @@ namespace OAuthServer
                 IssuerUri= "https://MyISSUER:44372/",
                 SiteName="My Super AuthServer",
                 PublicOrigin= "https://localhost:44372/",
-                Factory =factory
+                Factory =factory,
+                AuthenticationOptions =new AuthenticationOptions()
+                {
+                    PostSignOutAutoRedirectDelay=5,
+                    EnablePostSignOutAutoRedirect=true,
+                }
+                
             };
             Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Trace().CreateLogger();
             app.Map("/identity", idsrv => {

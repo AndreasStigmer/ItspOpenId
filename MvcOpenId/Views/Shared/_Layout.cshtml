@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -20,9 +21,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @{ 
+                        ClaimsIdentity ci = User.Identity as ClaimsIdentity;
+
+                    }
                     <li>@Html.ActionLink("Min sida", "Index", "Memberhome", new {id=HttpUtility.UrlEncode(User.Identity.Name)},null)</li>
                     <li>@Html.ActionLink("Alla medlemmar", "Index", "Members")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                    @if(User.Identity.IsAuthenticated) { 
+                        <li>@Html.ActionLink(String.Format("Logout({0})",ci.FindFirst("given_name").Value),"SignOut","Login")</li>
+                    }
                 </ul>
             </div>
         </div>

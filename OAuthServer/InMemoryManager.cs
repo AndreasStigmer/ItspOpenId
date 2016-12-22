@@ -112,6 +112,7 @@ namespace OAuthServer
                         new Secret("hemligt".Sha256())
                     },
                     IdentityTokenLifetime=120,
+                    RequireConsent=false,
                     AccessTokenLifetime=40,
                     RefreshTokenUsage=TokenUsage.ReUse,
                     ClientName="Mvc OpenID",
@@ -119,6 +120,10 @@ namespace OAuthServer
                     AllowAccessToAllScopes=true,
                     RedirectUris=new List<string> {
                         Uris.MvcOpenIdCallback
+                    },
+                    PostLogoutRedirectUris=new List<string>()
+                    {
+                          Uris.MvcOpenIdCallback
                     },
                     Enabled =true,
 
