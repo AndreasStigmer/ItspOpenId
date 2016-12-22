@@ -25,6 +25,7 @@ namespace OAuthServer.Services
                     return Task.FromResult(0);
                 }
                 context.AuthenticateResult = new AuthenticateResult(user.Subject, user.UserClaims.First(c => c.ClaimType == Constants.ClaimTypes.GivenName).ClaimValue);
+
                 return Task.FromResult(0);
             }
         }
