@@ -5,6 +5,9 @@ using Owin;
 using IdentityServer3.Core.Configuration;
 using System.Configuration;
 using Serilog;
+using OAuthServer.Services;
+using IdentityServer3.Core.Services;
+using System.Collections.Generic;
 
 [assembly: OwinStartup(typeof(OAuthServer.Startup))]
 
@@ -16,9 +19,14 @@ namespace OAuthServer
         {
             var inMemeoryManager = new InMemoryManager();
             var factory = new IdentityServerServiceFactory()
-                .UseInMemoryUsers(inMemeoryManager.GetUsers())
+                //.UseInMemoryUsers(inMemeoryManager.GetUsers())
                 .UseInMemoryScopes(inMemeoryManager.GetScopes())
                 .UseInMemoryClients(inMemeoryManager.GetClients());
+
+            MyUserService users = new MyUserService();
+            factory.UserService = new Registration<IUserService>(r => users);
+            
+
             var cert = Convert.FromBase64String(ConfigurationManager.AppSettings["SigningCertificate"]);
 
             // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
@@ -33,6 +41,15 @@ namespace OAuthServer
                 {
                     PostSignOutAutoRedirectDelay=5,
                     EnablePostSignOutAutoRedirect=true,
+                    LoginPageLinks=new List<LoginPageLink>()
+                    {
+                        new LoginPageLink() {
+                           Text="Skapa konto",
+                           Type="createaccount",
+                           Href="~/Konto/Nytt"
+                        }
+
+                    }
                 }
                 
             };

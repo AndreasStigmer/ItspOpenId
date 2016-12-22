@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserRepo
     {
@@ -11,8 +13,9 @@ namespace UserRepo
             public User()
             {
                 UserClaims = new List<UserClaim>();
-                UserLogins = new List<UserLogin>();
+                //UserLogins = new List<UserLogin>();
             }
+            [Key]
             public string Subject { get; set; }
 
             public string UserName { get; set; }
@@ -20,14 +23,20 @@ namespace UserRepo
 
             public bool IsActive { get; set; }
 
-            public IList<UserClaim> UserClaims { get; set; }
-            public IList<UserLogin> UserLogins { get; set; }
+            public virtual IList<UserClaim> UserClaims { get; set; }
+           // public IList<UserLogin> UserLogins { get; set; }
 
         }
 
         public class UserClaim
         {
+            [Key]
             public string Id { get; set; }
+
+            [ForeignKey("Subject")]
+            public User Owner { get; set; }
+
+            
             public string Subject { get; set; }
 
             public string ClaimType { get; set; }
