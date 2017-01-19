@@ -13,7 +13,7 @@ namespace UserRepo
             public User()
             {
                 UserClaims = new List<UserClaim>();
-                UserLogins = new List<UserLogin>();
+               // UserLogins = new List<UserLogin>();
             }
             [Key]
             public string Subject { get; set; }

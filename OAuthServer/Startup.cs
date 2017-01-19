@@ -52,8 +52,8 @@ namespace OAuthServer
                            Href="~/Konto/Nytt"
                         }
 
-                    },
-                    IdentityProviders=ConfigureProviders
+                    }
+                  
                     
                 }
                 
@@ -69,38 +69,6 @@ namespace OAuthServer
 
             
         }
-
-        //
-        private void ConfigureProviders(IAppBuilder app, string signInAsType) {
-            var fbOptions = new FacebookAuthenticationOptions() {
-                AuthenticationType="Facebook",
-                SignInAsAuthenticationType=signInAsType,
-                AppId= "1235203743213646",
-                AppSecret ="f1d20fa89a7dc59635c79fd25e23a6da",
-                Provider=new FacebookAuthenticationProvider() {
-                    OnAuthenticated= n=>
-                    {
-                        using (var client = new HttpClient()) {
-                            var result = client.GetAsync("https://graph.facebook.com/me?fields=first_name,last_name,email&access_token=" + n.AccessToken).Result;
-
-                            if(result.IsSuccessStatusCode)
-                            {
-                                var userinfo = result.Content.ReadAsStringAsync().Result;
-                                var fbuser = JsonConvert.DeserializeObject<FacebookUser>(userinfo);
-                                n.Identity.AddClaim(new System.Security.Claims.Claim("given_name", fbuser.first_name));
-                                n.Identity.AddClaim(new System.Security.Claims.Claim("family_name", fbuser.last_name));
-                                n.Identity.AddClaim(new System.Security.Claims.Claim("email", fbuser.email));
-                                
-                            }
-                        }
-
-
-                        return Task.FromResult(0);
-                    }
-                }
-            };
-            fbOptions.Scope.Add("email");
-            app.UseFacebookAuthentication(fbOptions);
-        }
+        
     }
 }

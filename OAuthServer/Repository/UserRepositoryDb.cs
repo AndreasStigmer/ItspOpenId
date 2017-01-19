@@ -26,7 +26,7 @@ namespace UserRepo
             return db.Users.FirstOrDefault(d => d.Subject == subject);
         }
 
-        public UserRepo.User GetUserForExternalUser(string providerkey,string provider) {
+       /* public UserRepo.User GetUserForExternalUser(string providerkey,string provider) {
             var user = db.Users.FirstOrDefault(d => d.UserLogins.Any(e => e.ProviderKey == providerkey && e.LoginProvider == provider));
             return user;
         }
@@ -40,7 +40,7 @@ namespace UserRepo
         {
             var user = db.Users.FirstOrDefault(d => d.UserClaims.Any(c=>c.ClaimType=="email" && c.ClaimValue==email));
             return user;
-        }
+        }*/
 
         public  void Dispose() {
             db = null;
